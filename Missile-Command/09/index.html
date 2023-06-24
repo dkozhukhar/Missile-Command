@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Missile Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      let missiles = [];
+      let bombs = [];
+
+      function setup() {
+        createCanvas(windowWidth, windowHeight);
+        bombs.push(new Bomb());
+      }
+
+      function draw() {
+        background(0);
+        for (let i = 0; i < missiles.length; i++) {
+          missiles[i].show();
+          missiles[i].move();
+          for (let j = 0; j < bombs.length; j++) {
+            if (missiles[i].hits(bombs[j])) {
+              bombs[j].explode();
+              bombs.splice(j, 1);
+            }
+          }
+        }
+        for (let i = 0; i < bombs.length; i++) {
+          bombs[i].show();
+          bombs[i].move();
+        }
+        if (random(1) < 0.01) {
+          bombs.push(new Bomb());
+        }
+      }
+
+      function mousePressed() {
+        let missile = new Missile(mouseX, mouseY);
+        missiles.push(missile);
+      }
+
+      function Missile(x, y) {
+        this.x = width / 2;
+        this.y = height;
+        this.targetX = x;
+        this.targetY = y;
+
+        this.show = function () {
+          fill(255);
+          ellipse(this.x, this.y, 16, 16);
+        };
+
+        this.move = function () {
+          let dir = createVector(this.targetX - this.x, this.targetY - this.y);
+          dir.setMag(1);
+          this.x += dir.x;
+          this.y += dir.y;
+        };
+
+        this.hits = function (bomb) {
+          let d = dist(this.x, this.y, bomb.x, bomb.y);
+          return d < 16;
+        };
+      }
+
+      function Bomb() {
+        this.x = random(width);
+        this.y = 0;
+        this.exploded = false;
+
+        this.show = function () {
+          if (!this.exploded) {
+            fill(255, 0, 0);
+            ellipse(this.x, this.y, 24, 24);
+          }
+        };
+
+        this.move = function () {
+          this.y += 2;
+        };
+
+        this.explode = function () {
+          this.exploded = true;
+        };
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Missile Game</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: #222;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    var baseX;
+    var baseY;
+
+    var missileX;
+    var missileY;
+
+    var targetX;
+    var targetY;
+
+    var missileLaunched = false;
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      baseX = windowWidth / 2;
+      baseY = windowHeight;
+    }
+
+    function draw() {
+      background(0);
+      noStroke();
+
+      // Draw base
+      fill(255);
+      rect(baseX, baseY - 20, 10, 20);
+
+      // Draw missile
+      if (missileLaunched) {
+        fill(255, 0, 0);
+        ellipse(missileX, missileY, 5, 10);
+
+        var dx = targetX - baseX;
+        var dy = targetY - baseY;
+        var angle = atan2(dy, dx);
+
+        missileX += cos(angle);
+        missileY += sin(angle);
+
+        if (dist(missileX, missileY, targetX, targetY) < 1) {
+          missileLaunched = false;
+        }
+      }
+    }
+
+    function mousePressed() {
+      missileX = baseX;
+      missileY = baseY;
+      targetX = mouseX;
+      targetY = mouseY;
+      missileLaunched = true;
+    }
+  </script>
+</body>
+</html>
